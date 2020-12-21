@@ -6,15 +6,20 @@
 """
 
 import argparse
+import codecs
 import csv
 import logging
 import sys
+from contextlib import closing
 from pathlib import Path
 
 import praw
+import requests
 from termcolor import colored as _colored
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
+
+SHEET_ID = "1TlLFTgMX3CnDiMWqAugMcB3g9tofgI7VlPK2IPZCZpo"
 
 INPUT_FILE = "Decision_SS.csv"
 OUTPUT_FILE = "output.csv"
@@ -26,6 +31,29 @@ def colored(text, *args, **kwargs):
     if sys.stdout.isatty():
         return _colored(text, *args, **kwargs)
     return text
+
+
+def get_posts_from_google_sheet(sheet_id):
+    sheet_url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
+    status_text = "\nReading URLs from Google Sheets..."
+    print(colored(status_text, "yellow", attrs=["bold"]), end=" ", flush=True)
+
+    with closing(requests.get(sheet_url, stream=True)) as _sh:
+        reader = csv.DictReader(codecs.iterdecode(_sh.iter_lines(), "utf-8"))
+        posts = [
+            {"id": record["Clip # (.0)"], "url": record["Link to comments"]}
+            for record in reader
+            if record["Link to comments"]
+        ]
+
+    response_text = "done!"
+    print(
+        " " * (LINE_LENGTH - len(status_text) - 2 - len(response_text)),
+        colored(response_text, "green", attrs=["bold"]),
+        "\n",
+    )
+
+    return posts
 
 
 def get_posts_from_csv(csv_input_file):
@@ -152,7 +180,7 @@ def main():
 
     args = parser.parse_args()
 
-    posts = get_posts_from_csv(INPUT_FILE)
+    posts = get_posts_from_google_sheet(SHEET_ID)
     comments = get_comments(posts, args.client_id, args.client_secret)
     comments = add_sentiment_scores(comments)
 
