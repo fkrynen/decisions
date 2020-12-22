@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" scrape_em.py
+""" decisions.py
     Fetch (top-level) reddit comments for posts specified in an input CSV
     and output them to a new CSV file with sentiment scores.
 """
@@ -180,6 +180,7 @@ def main():
 
     args = parser.parse_args()
 
+    # posts = get_posts_from_csv(INPUT_FILE)
     posts = get_posts_from_google_sheet(SHEET_ID)
     comments = get_comments(posts, args.client_id, args.client_secret)
     comments = add_sentiment_scores(comments)
