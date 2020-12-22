@@ -10,6 +10,8 @@ This repo contains a python application which will:
 
 ## Installation / Usage
 
+Reddit API credentials are required: get them [here](https://www.reddit.com/prefs/apps) (use the "create another app" button at the bottom).
+
 - Clone this repo
 - Make sure pipenv is installed (`pip install pipenv`)
 - `pipenv install`
