@@ -33,6 +33,16 @@ def colored(text, *args, **kwargs):
     return text
 
 
+def get_posts_from_reader(
+    reader, id_column_name="Clip # (.0)", url_column_name="Link to comments"
+):
+    return [
+        {"id": record[id_column_name], "url": record[url_column_name]}
+        for record in reader
+        if record[url_column_name]
+    ]
+
+
 def get_posts_from_google_sheet(sheet_id):
     sheet_url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
     status_text = "\nReading URLs from Google Sheets..."
@@ -40,11 +50,7 @@ def get_posts_from_google_sheet(sheet_id):
 
     with closing(requests.get(sheet_url, stream=True)) as _sh:
         reader = csv.DictReader(codecs.iterdecode(_sh.iter_lines(), "utf-8"))
-        posts = [
-            {"id": record["Clip # (.0)"], "url": record["Link to comments"]}
-            for record in reader
-            if record["Link to comments"]
-        ]
+        posts = get_posts_from_reader(reader)
 
     response_text = "done!"
     print(
@@ -62,11 +68,7 @@ def get_posts_from_csv(csv_input_file):
 
     with Path(csv_input_file).open("r") as _fh:
         reader = csv.DictReader(_fh)
-        posts = [
-            {"id": record["Clip # (.0)"], "url": record["Link to comments"]}
-            for record in reader
-            if record["Link to comments"]
-        ]
+        posts = get_posts_from_reader(reader)
 
     response_text = "done!"
     print(
