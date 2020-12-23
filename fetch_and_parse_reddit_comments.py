@@ -94,7 +94,7 @@ def get_comments(posts, client_id, client_secret):
         print(colored(status_text, "blue"), end=" ", flush=True)
 
         submission = reddit.submission(url=post["url"])
-        submission.comments.replace_more(limit=0)
+        submission.comments.replace_more(limit=None)
         for comment in submission.comments:
             comments.append(
                 {
