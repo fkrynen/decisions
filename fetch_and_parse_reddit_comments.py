@@ -5,16 +5,16 @@
     and output them to a new CSV file with sentiment scores.
 """
 
-import argparse
 import codecs
 import csv
-import logging
 import sys
 from contextlib import closing
 from pathlib import Path
 
 import praw
 import requests
+import typer
+
 from termcolor import colored as _colored
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
@@ -169,26 +169,21 @@ def write_comments_to_csv(comments, csv_output_file):
     )
 
 
-def main():
+def cli(
+    client_id: str = typer.Option(...),
+    client_secret: str = typer.Option(...),
+    sheet_id: str = SHEET_ID,
+    output_file: str = OUTPUT_FILE,
+):
     """ Command-line entry-point. """
 
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-    parser = argparse.ArgumentParser(description="Description: {}".format(__file__))
-
-    parser.add_argument("--client-id", action="store", help="Reddit API client_id")
-    parser.add_argument(
-        "--client-secret", action="store", help="Reddit API client_secret"
-    )
-
-    args = parser.parse_args()
-
     # posts = get_posts_from_csv(INPUT_FILE)
-    posts = get_posts_from_google_sheet(SHEET_ID)
-    comments = get_comments(posts, args.client_id, args.client_secret)
+    posts = get_posts_from_google_sheet(sheet_id)
+    comments = get_comments(posts, client_id, client_secret)
     comments = add_sentiment_scores(comments)
 
-    write_comments_to_csv(comments, OUTPUT_FILE)
+    write_comments_to_csv(comments, output_file)
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(cli)

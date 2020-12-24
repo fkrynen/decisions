@@ -10,4 +10,5 @@ ipython = "*"
 praw = "*"
 termcolor = "*"
 textblob = "*"
+typer = {extras = ["all"], version = "*"}
 requests = "*"
