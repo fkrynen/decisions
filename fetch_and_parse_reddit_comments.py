@@ -19,9 +19,9 @@ from termcolor import colored as _colored
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
 
-SHEET_ID = "1TlLFTgMX3CnDiMWqAugMcB3g9tofgI7VlPK2IPZCZpo"
+SHEET_ID = "1FRK-AaRod3F31TiFQhmc69Wp99NawEzJF1MAZP3pDBY"
 
-INPUT_FILE = "Decision_SS.csv"
+INPUT_FILE = "New Decisions.csv"
 OUTPUT_FILE = "output.csv"
 
 LINE_LENGTH = 80
